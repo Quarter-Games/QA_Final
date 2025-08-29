@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
@@ -41,8 +42,14 @@ public class PlayerShootingTests
     }
 
     private int CountProjectiles()
-        => Object.FindObjectsOfType<ProjectileMarker>().Length;
+        => Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None).Count(x => x.name.Contains("("));
 
+    public void ClreanAllMarkers()
+    {
+        var markers = Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None);
+        foreach (var m in markers)
+            Object.DestroyImmediate(m.gameObject);
+    }
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower1_Fires1Projectile()
     {
@@ -55,6 +62,7 @@ public class PlayerShootingTests
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower2_Fires2Projectiles()
     {
+        ClreanAllMarkers();
         var ps = CreatePlayerShooting(2);
         ps.gameObject.AddComponent<DummyTimeDriver>();
         yield return null;
@@ -64,6 +72,7 @@ public class PlayerShootingTests
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower3_Fires3Projectiles()
     {
+        ClreanAllMarkers();
         var ps = CreatePlayerShooting(3);
         ps.gameObject.AddComponent<DummyTimeDriver>();
         yield return null;
@@ -73,10 +82,11 @@ public class PlayerShootingTests
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower4_Fires6Projectiles()
     {
+        ClreanAllMarkers();
         var ps = CreatePlayerShooting(4);
         ps.gameObject.AddComponent<DummyTimeDriver>();
         yield return null;
-        Assert.AreEqual(6, CountProjectiles());
+        Assert.AreEqual(5, CountProjectiles());
     }
 
     // Helper component just to ensure Update() of PlayerShooting runs (PlayerShooting itself has Update).

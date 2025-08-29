@@ -5,7 +5,7 @@ using UnityEngine.TestTools;
 
 public class PlayerTests
 {
-    private class FXMarker : MonoBehaviour {}
+    private class FXMarker : MonoBehaviour { }
 
     [UnityTest]
     public IEnumerator Player_GetDamage_SpawnsFX_And_DestroysPlayer()
@@ -23,12 +23,13 @@ public class PlayerTests
         yield return null; // allow Destroy & Instantiate to process
 
         // Assert
-        var spawnedFX = Object.FindObjectsOfType<FXMarker>();
-        Assert.AreEqual(1, spawnedFX.Length, "Destruction FX was not instantiated exactly once.");
+        var spawnedFX = Object.FindObjectsByType<FXMarker>(FindObjectsSortMode.None);
+        Assert.AreEqual(2, spawnedFX.Length, "Expected exactly 2 FX objects (original prefab + instantiated clone).");
         Assert.IsTrue(playerGO == null, "Player GameObject should be destroyed after taking damage.");
 
         Object.DestroyImmediate(fxPrefab);
         foreach (var fx in spawnedFX)
-            Object.DestroyImmediate(fx.gameObject);
+            if (fx != null)
+                Object.DestroyImmediate(fx.gameObject);
     }
 }
