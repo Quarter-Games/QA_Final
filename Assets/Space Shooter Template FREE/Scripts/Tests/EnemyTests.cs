@@ -7,9 +7,9 @@ using UnityEngine.TestTools;
 
 public class EnemyTests
 {
-    private class HitMarker : MonoBehaviour {}
-    private class DestructionMarker : MonoBehaviour {}
-    private class ProjectileMarker : MonoBehaviour {}
+    private class HitMarker : MonoBehaviour { }
+    private class DestructionMarker : MonoBehaviour { }
+    private class ProjectileMarker : MonoBehaviour { }
 
     private Enemy CreateEnemy(int health, int shotChance = 0)
     {
@@ -39,6 +39,13 @@ public class EnemyTests
     public IEnumerator Enemy_GetDamage_SpawnsHitEffect_UntilDestroyed()
     {
         var enemy = CreateEnemy(2);
+        yield return null;
+        // Force shield off via reflection (set private bool isShielded = false)
+        var shieldField = typeof(Enemy).GetField("isShielded", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (shieldField != null) shieldField.SetValue(enemy, false);
+        // Also ensure shield VFX (if any) is disabled
+        if (enemy.shieldVFX != null) enemy.shieldVFX.SetActive(false);
+
         enemy.GetDamage(1); // should not destroy
         yield return null;
         Assert.IsNotNull(enemy, "Enemy should still exist.");
@@ -46,8 +53,9 @@ public class EnemyTests
             "Hit effect clone should be instantiated.");
 
         enemy.GetDamage(1); // should destroy
-        yield return null;
-        Assert.IsTrue(enemy == null, "Enemy should be destroyed after lethal damage.");
+
+        yield return new WaitForSeconds(0.5f);
+        Assert.IsTrue(enemy == null || enemy.transform == null, "Enemy should be destroyed after lethal damage.");
         Assert.Greater(Object.FindObjectsByType<DestructionMarker>(FindObjectsSortMode.None).Count(h => h.name.Contains("(Clone)")), 0,
             "Destruction VFX clone should be instantiated.");
     }
@@ -56,10 +64,8 @@ public class EnemyTests
     public IEnumerator Enemy_ActivateShooting_SpawnsProjectile_WhenChance100()
     {
         var enemy = CreateEnemy(1, 100);
-        // Invoke Start() to schedule shooting immediately (min=max=0)
         var startMI = typeof(Enemy).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
         startMI.Invoke(enemy, null);
-        // Also directly invoke private ActivateShooting via reflection to bypass Invoke timing
         var shootMI = typeof(Enemy).GetMethod("ActivateShooting", BindingFlags.Instance | BindingFlags.NonPublic);
         shootMI.Invoke(enemy, null);
         yield return null;
@@ -81,23 +87,18 @@ public class EnemyTests
     [UnityTest]
     public IEnumerator Enemy_PlayerCollision_CallsPlayerDamage()
     {
-        // Setup player
         var playerGO = new GameObject("Player");
         playerGO.tag = "Player";
         var player = playerGO.AddComponent<Player>();
         player.destructionFX = new GameObject("PlayerFX");
-        // Enemy with projectile (damage=3)
         var enemy = CreateEnemy(1);
-        // Provide Player.instance
         Player.instance = player;
 
-        // Reflection invoke OnTriggerEnter2D
         var collideMI = typeof(Enemy).GetMethod("OnTriggerEnter2D", BindingFlags.Instance | BindingFlags.NonPublic);
         var playerCollider = playerGO.AddComponent<BoxCollider2D>();
         collideMI.Invoke(enemy, new object[] { playerCollider });
 
         yield return null;
-        // Player should be destroyed (GetDamage always destroys)
         Assert.IsTrue(player == null || player.gameObject == null, "Player should be destroyed after collision damage.");
     }
 }

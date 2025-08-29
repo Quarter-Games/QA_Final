@@ -108,7 +108,7 @@ MonoBehaviour:
   destructionVFX: {fileID: 1280240331523082, guid: 45ae5851ef2832044bba82850372d67b,
     type: 3}
   hitEffect: {fileID: 1256001557233130, guid: 2dd0bdb7830e6644da169b32252dca96, type: 3}
-  shotChance: 0
+  shotChance: 75
   shotTimeMin: 0
   shotTimeMax: 0
   moveSpeed: 3
