@@ -20,10 +20,8 @@ public class PlayerMovingTests
         var mover = playerGO.AddComponent<PlayerMoving>();
         mover.borders = new Borders
         {
-            minXOffset = 1f,
-            maxXOffset = 1f,
-            minYOffset = 1f,
-            maxYOffset = 1f
+            minXOffset = 1f, maxXOffset = 1f,
+            minYOffset = 1f, maxYOffset = 1f
         };
 
         // Allow Start() to run to compute borders

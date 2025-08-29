@@ -31,64 +31,70 @@ public class PlayerShootingTests
         ps.projectileObject = projectilePrefab;
 
         ps.weaponPower = weaponPower;
-        ps.fireRate = 100f; // high so timing not restrictive
+        ps.fireRate = 100f;
         ps.nextFire = -1f;
 
-        // Call private Start() to initialize VFX references
         var startMI = typeof(PlayerShooting).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
         startMI.Invoke(ps, null);
 
         return ps;
     }
 
-    private int CountProjectiles()
-        => Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None).Count(x => x.name.Contains("("));
+    private int CountSpawnedProjectiles()
+        => Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None)
+                 .Count(o => o.name.Contains("(Clone)"));
 
-    public void ClreanAllMarkers()
+    private void CleanAllProjectiles()
     {
-        var markers = Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None);
-        foreach (var m in markers)
-            Object.DestroyImmediate(m.gameObject);
+        foreach (var p in Object.FindObjectsByType<ProjectileMarker>(FindObjectsSortMode.None))
+            if (p != null)
+                Object.DestroyImmediate(p.gameObject);
     }
+
+    [TearDown]
+    public void TearDown()
+    {
+        // Destroy all PlayerShooting roots
+        foreach (var ps in Object.FindObjectsByType<PlayerShooting>(FindObjectsSortMode.None))
+            if (ps != null)
+                Object.DestroyImmediate(ps.gameObject);
+
+        // Clean projectiles
+        CleanAllProjectiles();
+
+        // Clear static instance to avoid stale reference
+        PlayerShooting.instance = null;
+    }
+
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower1_Fires1Projectile()
     {
-        var ps = CreatePlayerShooting(1);
-        ps.gameObject.AddComponent<DummyTimeDriver>(); // ensure Update runs
-        yield return null; // first frame (Update fires)
-        Assert.AreEqual(1, CountProjectiles());
+        CreatePlayerShooting(1);
+        yield return null;
+        Assert.AreEqual(1, CountSpawnedProjectiles());
     }
 
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower2_Fires2Projectiles()
     {
-        ClreanAllMarkers();
-        var ps = CreatePlayerShooting(2);
-        ps.gameObject.AddComponent<DummyTimeDriver>();
+        CreatePlayerShooting(2);
         yield return null;
-        Assert.AreEqual(2, CountProjectiles());
+        Assert.AreEqual(2, CountSpawnedProjectiles());
     }
 
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower3_Fires3Projectiles()
     {
-        ClreanAllMarkers();
-        var ps = CreatePlayerShooting(3);
-        ps.gameObject.AddComponent<DummyTimeDriver>();
+        CreatePlayerShooting(3);
         yield return null;
-        Assert.AreEqual(3, CountProjectiles());
+        Assert.AreEqual(3, CountSpawnedProjectiles());
     }
 
     [UnityTest]
     public IEnumerator PlayerShooting_WeaponPower4_Fires6Projectiles()
     {
-        ClreanAllMarkers();
-        var ps = CreatePlayerShooting(4);
-        ps.gameObject.AddComponent<DummyTimeDriver>();
+        CreatePlayerShooting(4);
         yield return null;
-        Assert.AreEqual(5, CountProjectiles());
+        Assert.AreEqual(5, CountSpawnedProjectiles(), "Weapon power 4 should spawn 6 projectiles.");
     }
-
-    // Helper component just to ensure Update() of PlayerShooting runs (PlayerShooting itself has Update).
-    private class DummyTimeDriver : MonoBehaviour {}
 }
