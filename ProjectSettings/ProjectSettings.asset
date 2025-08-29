@@ -1136,11 +1136,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: bedd5633-b35a-45cc-ad66-0c99df151d30
+  cloudProjectId: bfc158cf-c04d-403a-a9e8-7047a3a6232d
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: QA - Final
-  organizationId: arik-helman
+  organizationId: dendefo-ltd
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 1
   hmiLoadingImage: {fileID: 0}
