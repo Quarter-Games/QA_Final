@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1152134415
+  m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3c6d6674bfcb5ac498628dff731a28f5, type: 3}
@@ -113,8 +113,7 @@ MonoBehaviour:
   shotTimeMin: 1
   shotTimeMax: 3
   shieldVFX: {fileID: 2814821730722634750}
-  shieldActiveDuration: 2
-  shieldActivationInterval: 3
+  shieldActivationInterval: 1
 --- !u!58 &58425179734721642
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -209,7 +208,7 @@ PrefabInstance:
     - target: {fileID: 686556700813670574, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
       propertyPath: playOnAwake
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 835586528366441215, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
@@ -274,17 +273,17 @@ PrefabInstance:
     - target: {fileID: 5630613549761616705, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
       propertyPath: playOnAwake
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6058032965328611162, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
       propertyPath: playOnAwake
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709670786661330577, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
       propertyPath: playOnAwake
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709670786661330577, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
@@ -294,7 +293,7 @@ PrefabInstance:
     - target: {fileID: 8946665168325921534, guid: c54eee64d7b7e904286c13ec7cf92d07,
         type: 3}
       propertyPath: playOnAwake
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -327,5 +326,5 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 55
   m_SortAtRoot: 0

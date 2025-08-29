@@ -25,8 +25,6 @@ public class Enemy : MonoBehaviour
     [Header("Shield Parameters")]
     [Tooltip("VFX for the shield (e.g., a Particle System)")]
     public GameObject shieldVFX;
-    [Tooltip("Duration the shield is active (in seconds)")]
-    public float shieldActiveDuration = 2f;
     [Tooltip("Interval between shield activations (in seconds)")]
     public float shieldActivationInterval = 10f;
     private bool isShielded = false;
@@ -34,6 +32,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        isShielded = true;
         // Start the shooting coroutine
         Invoke("ActivateShooting", Random.Range(shotTimeMin, shotTimeMax));
 
@@ -44,12 +43,11 @@ public class Enemy : MonoBehaviour
     // Activates the shield
     void ActivateShield()
     {
-        if (shieldVFX != null)
+        if (shieldVFX != null && isShielded)
         {
-            isShielded = true;
+            shieldVFX.SetActive(false);
             shieldVFX.SetActive(true);
-            // Deactivate the shield after a set duration
-            Invoke("DeactivateShield", shieldActiveDuration);
+
         }
     }
 
@@ -80,6 +78,7 @@ public class Enemy : MonoBehaviour
         {
             // The shield absorbs the damage completely
             Instantiate(hitEffect, transform.position, Quaternion.identity, transform);
+            DeactivateShield();
         }
         else // If the shield is not active, apply damage to the enemy's health
         {
